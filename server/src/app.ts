@@ -1,12 +1,21 @@
 import express from "express";
-// import cors from "cors";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import cors from "cors";
 
 //import routers
 import healthCheckRouter from "./routers/healthCheck.routers";
 
 const app = express();
-//:TODO: add cors
-// app.use(cors({ origin: "http://localhost:5173" }));
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CORS_ORIGIN,
+    methods: ["GET", "POST"],
+  },
+});
+
+app.use(cors({ origin: process.env.CORS_ORIGIN }));
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -15,11 +24,21 @@ app.use(express.static("public"));
 // routes
 app.use("/api/health", healthCheckRouter);
 
-app.get("/", (req, res) => {
-  console.log(req);
-  res.send("API is running...");
-});
+io.on("connection", (socket) => {
+  console.log("a user connected on socket", socket);
 
-//error
+  socket.on("join-room", (roomId) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room ${roomId}`);
+  });
+
+  socket.on("code-change", ({ roomId, code }) => {
+    socket.to(roomId).emit("receive-changes", code);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected from socket");
+  });
+});
 
 export { app };
