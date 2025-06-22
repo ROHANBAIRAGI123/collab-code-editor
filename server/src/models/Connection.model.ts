@@ -1,29 +1,35 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const codeExecutionSchema = new mongoose.Schema({
   clerkUserId: { type: String, unique: true, required: true },
-  username: {
-    type: String,
-    required: true,
-  },
+
   name: {
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
+  language: {
     type: String,
     required: true,
   },
-  role: {
+  currentCodeContent: {
     type: String,
-    enum: ["admin", "user"],
-    default: "user",
+    required: true,
+  },
+  output: {
+    type: String,
+    required: true,
+  },
+  error: {
+    type: String,
+    required: true,
+  },
+  roomId: {
+    type: String,
+    required: true,
   },
 });
 
-export const User = mongoose.model("User", userSchema);
+export const codeExecution = mongoose.model(
+  "codeExecution",
+  codeExecutionSchema
+);

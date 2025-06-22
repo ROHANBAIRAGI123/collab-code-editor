@@ -10,7 +10,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -25,9 +25,9 @@ app.use(express.static("public"));
 app.use("/api/health", healthCheckRouter);
 
 io.on("connection", (socket) => {
-  console.log("a user connected on socket", socket);
+  console.log("a user connected on socket", socket.data);
 
-  socket.on("join-room", (roomId) => {
+  socket.on("join-room", ({ roomId }) => {
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
   });
@@ -41,4 +41,4 @@ io.on("connection", (socket) => {
   });
 });
 
-export { app };
+export { httpServer, io };
