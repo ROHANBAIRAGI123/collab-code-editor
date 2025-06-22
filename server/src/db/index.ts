@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
-// const DB_NAME = "";
-// const MONGODB_URI =
+import "@dotenvx/dotenvx/config";
+
+const DB_NAME = process.env.DB_NAME;
+const MONGODB_URI = process.env.MONGODB_URI;
 const connectDB = async (): Promise<void> => {
   try {
     const connection = await mongoose.connect(`${MONGODB_URI}/${DB_NAME}`);
