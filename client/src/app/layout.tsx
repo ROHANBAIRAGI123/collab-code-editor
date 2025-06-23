@@ -7,6 +7,7 @@ import NavigationHeader from "@/components/NavigationHeader";
 import { Toaster } from "react-hot-toast";
 import Header from "@/app/(root)/_components/Header";
 import Home from "@/app/(root)/page";
+import RoomID from "./(root)/_components/RoomID";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -36,16 +37,13 @@ export default function RootLayout({
         <body
           className={` antialiased min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-gray-100 flex flex-col`}
         >
-          {/* <Header>
-            <NavigationHeader>
-
-            </NavigationHeader>
-          </Header>     */}
-          <Home />
+          {/* <Home />
 
           <Footer />
 
-          <Toaster />
+          <Toaster /> */}
+
+          <RoomID/>
         </body>
       </html>
     </ClerkProvider>
