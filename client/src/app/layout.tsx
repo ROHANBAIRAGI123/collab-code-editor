@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import NavigationHeader from "@/components/NavigationHeader";
 import { Toaster } from "react-hot-toast";
 import Header from "@/app/(root)/_components/Header";
-import Home from "@/app/(root)/page"
+import Home from "@/app/(root)/page";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -29,7 +29,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(children);
+  console.log(children?.toString);
   return (
     <ClerkProvider>
       <html lang="en">
@@ -41,7 +41,7 @@ export default function RootLayout({
 
             </NavigationHeader>
           </Header>     */}
-          <Home /> 
+          <Home />
 
           <Footer />
 

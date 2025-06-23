@@ -1,6 +1,8 @@
 "use client";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
+import * as monaco from "monaco-editor"; // Only for types
+import { socket } from "@/lib/socket";
 import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
@@ -9,19 +11,70 @@ import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
-// import ShareSnippetDialog from "./ShareSnippetDialog";
 
 function EditorPanel() {
   const clerk = useClerk();
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const { language, theme, fontSize, editor, setFontSize, setEditor } = useCodeEditorStore();
+
+  //for editor
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const isRemoteChange = useRef(false);
+
+  useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit("join-room", { roomId: "1" });
+    socket.on("receive-changes", handleReceiveChanges);
+
+    return () => {
+      socket.off("receive-changes", handleReceiveChanges);
+      socket.disconnect();
+    };
+  }, []);
+  const handleReceiveChanges = (data: string) => {
+    updateEditorContent(data);
+  };
+  const handleEditorDidMount = (
+    editor: monaco.editor.IStandaloneCodeEditor
+  ) => {
+    editorRef.current = editor;
+  };
+  const handleChange = (value: string | undefined) => {
+    if (isRemoteChange.current) {
+      isRemoteChange.current = false; // Reset the flag
+      return; // Don't emit if it's a remote change
+    }
+    if (value !== undefined) {
+      //:TODO add room id
+      socket.emit("code-change", { roomId: "1", code: value });
+      console.log("Code emmitted:", value);
+    }
+  };
+
+  const updateEditorContent = (newCode: string) => {
+    const editor = editorRef.current;
+    if (editor && editor.getValue() !== newCode) {
+      const currentCode = editor.getValue();
+      if (currentCode === newCode) return;
+
+      const currentPosition = editor.getPosition();
+      isRemoteChange.current = true;
+      editor.setValue(newCode);
+      if (currentPosition) {
+        editor.setPosition(currentPosition);
+      }
+    }
+  };
+
+  const { language, theme, fontSize, editor, setFontSize, setEditor } =
+    useCodeEditorStore();
 
   const mounted = useMounted();
 
   useEffect(() => {
     const savedCode = localStorage.getItem(`editor-code-${language}`);
     const newCode = savedCode || LANGUAGE_CONFIG[language].defaultCode;
-    console.log(newCode)
     // if (editor) editor.setValue(newCode);
   }, [language, editor]);
 
@@ -32,12 +85,13 @@ function EditorPanel() {
 
   const handleRefresh = () => {
     const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
-    console.log(defaultCode)
+    console.log(defaultCode);
     // if (editor) editor.setValue(defaultCode);
     localStorage.removeItem(`editor-code-${language}`);
   };
 
   const handleEditorChange = (value: string | undefined) => {
+    handleChange(value);
     if (value) localStorage.setItem(`editor-code-${language}`, value);
   };
 
@@ -56,11 +110,18 @@ function EditorPanel() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1e1e2e] ring-1 ring-white/5">
-              <Image src={"/" + language + ".png"} alt="Logo" width={24} height={24} />
+              <Image
+                src={"/" + language + ".png"}
+                alt="Logo"
+                width={24}
+                height={24}
+              />
             </div>
             <div>
               <h2 className="text-sm font-medium text-white">Code Editor</h2>
-              <p className="text-xs text-gray-500">Write and execute your code</p>
+              <p className="text-xs text-gray-500">
+                Write and execute your code
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -73,7 +134,9 @@ function EditorPanel() {
                   min="12"
                   max="24"
                   value={fontSize}
-                  onChange={(e) => handleFontSizeChange(parseInt(e.target.value))}
+                  onChange={(e) =>
+                    handleFontSizeChange(parseInt(e.target.value))
+                  }
                   className="w-20 h-1 bg-gray-600 rounded-lg cursor-pointer"
                 />
                 <span className="text-sm font-medium text-gray-400 min-w-[2rem] text-center">
@@ -96,7 +159,6 @@ function EditorPanel() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setIsShareDialogOpen(true)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg overflow-hidden bg-gradient-to-r
                from-blue-500 to-blue-600 opacity-90 hover:opacity-100 transition-opacity"
             >
@@ -115,6 +177,7 @@ function EditorPanel() {
               onChange={handleEditorChange}
               theme={theme}
               beforeMount={defineMonacoThemes}
+              onMount={handleEditorDidMount}
               // onMount={(editor) => setEditor(editor)}
               options={{
                 minimap: { enabled: false },
