@@ -2,6 +2,8 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import { Webhooks } from "./utils/WebHooks";
+import bodyParser from "body-parser";
 
 //import routers
 import healthCheckRouter from "./routers/healthCheck.routers";
@@ -24,21 +26,10 @@ app.use(express.static("public"));
 // routes
 app.use("/api/health", healthCheckRouter);
 
-io.on("connection", (socket) => {
-  console.log("a user connected on socket", socket.data);
-
-  socket.on("join-room", ({ roomId }) => {
-    socket.join(roomId);
-    console.log(`User ${socket.id} joined room ${roomId}`);
-  });
-
-  socket.on("code-change", ({ roomId, code }) => {
-    socket.to(roomId).emit("receive-changes", code);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected from socket");
-  });
-});
+app.post(
+  "/api/webhook",
+  bodyParser.raw({ type: "application/json" }),
+  Webhooks
+);
 
 export { httpServer, io };

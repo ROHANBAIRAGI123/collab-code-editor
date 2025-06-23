@@ -7,6 +7,7 @@ interface WebhookEvent {
     id: string;
     first_name: string;
     last_name: string;
+    email_addresses: [{ email_address: string }];
   };
   type: string;
 }
@@ -33,11 +34,13 @@ export async function Webhooks(req: Request, res: Response) {
 
       const firstName = attributes.first_name;
       const lastName = attributes.last_name;
+      const email = attributes.email_addresses[0]?.email_address;
 
       const user = new User({
         clerkUserId: id,
         firstName: firstName,
         lastName: lastName,
+        email: email,
       });
 
       await user.save();
