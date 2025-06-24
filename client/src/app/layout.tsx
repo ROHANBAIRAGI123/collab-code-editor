@@ -3,10 +3,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/Footer";
-import NavigationHeader from "@/components/NavigationHeader";
 import { Toaster } from "react-hot-toast";
-import Header from "@/app/(root)/_components/Header";
 import Home from "@/app/(root)/page";
+import FileTree from "@/components/FileTree";
+
+import Sidebar from "@/components/Sidebar";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -36,13 +37,10 @@ export default function RootLayout({
         <body
           className={` antialiased min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-gray-100 flex flex-col`}
         >
-          {/* <Header>
-            <NavigationHeader>
+          {/* <Home /> */}
 
-            </NavigationHeader>
-          </Header>     */}
-          <Home />
-
+          <Sidebar />
+          {/* <TemporaryDrawer /> */}
           <Footer />
 
           <Toaster />
