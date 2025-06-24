@@ -28,6 +28,8 @@ import { TreeItemDragAndDropOverlay } from "@mui/x-tree-view/TreeItemDragAndDrop
 import { useTreeItemModel } from "@mui/x-tree-view/hooks";
 import { TreeViewBaseItem } from "@mui/x-tree-view/models";
 
+import useContextMenu from "@/hooks/useContextMenu";
+import ContextMenu from "./TreeContextMenu";
 type FileType =
   | "image"
   | "pdf"
@@ -191,7 +193,7 @@ function TransitionComponent(props: TransitionProps) {
 }
 
 const TreeItemLabelText = styled(Typography)({
-  color: "inherit",
+  color: "whitesmoke",
   fontFamily: "General Sans",
   fontWeight: 500,
 });
@@ -219,7 +221,7 @@ function CustomLabel({
       {Icon && (
         <Box
           component={Icon}
-          className="labelIcon"
+          className="labelIcon "
           color="inherit"
           sx={{ mr: 1, fontSize: "1.2rem" }}
         />
@@ -254,13 +256,16 @@ const getIconFromFileType = (fileType: FileType) => {
 
 interface CustomTreeItemProps
   extends Omit<UseTreeItemParameters, "rootRef">,
-    Omit<React.HTMLAttributes<HTMLLIElement>, "onFocus"> {}
+    Omit<React.HTMLAttributes<HTMLLIElement>, "onFocus"> {
+  onRightClick?: (e: React.MouseEvent, item?: ExtendedTreeItemProps) => void;
+}
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   props: CustomTreeItemProps,
   ref: React.Ref<HTMLLIElement>
 ) {
-  const { id, itemId, label, disabled, children, ...other } = props;
+  const { id, itemId, label, disabled, children, onRightClick, ...other } =
+    props;
 
   const {
     getContextProviderProps,
@@ -295,6 +300,10 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
             {...getLabelProps({
               icon,
               expandable: status.expandable && status.expanded,
+              onContextMenu: (e: React.MouseEvent) => {
+                e.preventDefault();
+                props.onRightClick?.(e, item);
+              },
             })}
           />
           <TreeItemDragAndDropOverlay {...getDragAndDropOverlayProps()} />
@@ -305,18 +314,34 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   );
 });
 
-export default function FileExplorer() {
+export default function FileTree() {
+  const { contextMenu, handleContextMenu, closeContextMenu } = useContextMenu();
+
   return (
-    <RichTreeView
-      items={ITEMS}
-      sx={{
-        height: "fit-content",
-        flexGrow: 1,
-        maxWidth: 400,
-        overflowY: "auto",
-      }}
-      slots={{ item: CustomTreeItem }}
-      itemChildrenIndentation={24}
-    />
+    <div>
+      <RichTreeView
+        items={ITEMS}
+        sx={{
+          height: "fit-content",
+          flexGrow: 1,
+          maxWidth: 400,
+          overflowY: "auto",
+        }}
+        slots={{
+          item: (props) => (
+            <CustomTreeItem {...props} onRightClick={handleContextMenu} />
+          ),
+        }}
+        itemChildrenIndentation={24}
+      />
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={closeContextMenu}
+          clickedItem={contextMenu.clickedItem}
+        />
+      )}
+    </div>
   );
 }
