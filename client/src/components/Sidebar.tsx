@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import FileTree from "./FileTree";
+import { createFile } from "@/lib/Treeutils";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);

@@ -34,6 +34,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", async ({ roomId }) => {
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
+
     // const currentCode = await codeExecution.findOne({ roomId });
     // if (currentCode) {
     //   socket.emit("receive-changes", currentCode.currentCodeContent);

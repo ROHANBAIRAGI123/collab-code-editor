@@ -37,10 +37,9 @@ export default function RootLayout({
         <body
           className={` antialiased min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-gray-100 flex flex-col`}
         >
-          {/* <Home /> */}
+          <Home />
 
-          <Sidebar />
-          {/* <TemporaryDrawer /> */}
+          {/* <Sidebar /> */}
           <Footer />
 
           <Toaster />

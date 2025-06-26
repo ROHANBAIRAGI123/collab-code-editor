@@ -5,6 +5,7 @@ import {
   getFile,
   renameFile,
   saveFile,
+  getTreeByRoomId,
 } from "../controllers/File.controllers";
 const router = Router();
 
@@ -13,5 +14,6 @@ router.route("/delete/:id").delete(deleteFile);
 router.route("/get/:id").get(getFile);
 router.route("/rename/:id").put(renameFile);
 router.route("/save/:id").put(saveFile);
+router.route("/tree/:roomId").get(getTreeByRoomId);
 
 export default router;

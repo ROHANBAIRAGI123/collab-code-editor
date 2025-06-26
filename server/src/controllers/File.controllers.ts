@@ -3,6 +3,7 @@ import asyncHandler from "../utils/asyncHandler";
 import logger from "../utils/logger";
 import { Request, Response } from "express";
 import { File } from "../models/File.model";
+import buildTree from "../utils/TreeBuilder";
 
 // Health check for API
 const createFile = asyncHandler(async (req: Request, res: Response) => {
@@ -19,13 +20,44 @@ const createFile = asyncHandler(async (req: Request, res: Response) => {
     fileType: fileType,
   });
   await newFile.save();
+
+  const parentFile = await File.findOne({ id: parentId });
+  if (!parentFile) {
+    const newParentFile = new File({
+      id: parentId,
+      parentId: null,
+      roomId: roomId,
+      label: "src",
+      fileType: "folder",
+      children: [newFile._id],
+    });
+    await newParentFile.save();
+  }
+  if (parentFile) {
+    parentFile.children.push(newFile._id);
+    await parentFile.save();
+  }
+
   res.status(200).json(new ApiResponse(201, "File created successfully"));
 });
 
 const deleteFile = asyncHandler(async (req: Request, res: Response) => {
   logger.info("File deletion request", req, res);
   const { id } = req.params;
+  const file = await File.findById(id);
+  if (file) {
+    const parentId = file.parentId;
+    const parent = await File.findById(parentId);
+    if (parent) {
+      const index = parent.children.indexOf(file._id);
+      if (index > -1) {
+        parent.children.splice(index, 1);
+        await parent.save();
+      }
+    }
+  }
   await File.findByIdAndDelete(id);
+
   res.status(200).json(new ApiResponse(201, "File deleted successfully"));
 });
 
@@ -52,4 +84,19 @@ const saveFile = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(new ApiResponse(201, "File saved successfully"));
 });
 
-export { createFile, deleteFile, getFile, renameFile, saveFile };
+const getTreeByRoomId = asyncHandler(async (req: Request, res: Response) => {
+  const { roomId } = req.params;
+  const files = await File.find({ roomId });
+
+  const tree = buildTree(files);
+  res.status(200).json(tree);
+});
+
+export {
+  createFile,
+  deleteFile,
+  getFile,
+  renameFile,
+  saveFile,
+  getTreeByRoomId,
+};

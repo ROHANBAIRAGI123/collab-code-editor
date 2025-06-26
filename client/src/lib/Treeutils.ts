@@ -1,6 +1,21 @@
 "use client";
 
+import { ExtendedTreeItemProps } from "@/types/FileSystemTypes";
 import axios from "axios";
+
+function findParentId(
+  tree: ExtendedTreeItemProps[],
+  targetId: string
+): string | null {
+  for (const node of tree) {
+    if (node.children?.some((child) => child.id === targetId)) {
+      return node.id;
+    }
+    const nested = node.children && findParentId(node.children, targetId);
+    if (nested) return nested;
+  }
+  return null;
+}
 
 const getFile = async (id: string) => {
   const response = await axios.get(`/api/file/get/:id`, { params: { id: id } });
@@ -30,6 +45,18 @@ const saveFile = async (id: string, FileContent: string) => {
   return response.data;
 };
 
+function ensureIds(tree: any[]): any[] {
+  return tree.map((node) => {
+    if (!node.id) {
+      node.id = `${Date.now()}-${Math.random()}`;
+    }
+    if (node.children) {
+      node.children = ensureIds(node.children);
+    }
+    return node;
+  });
+}
+
 const createFile = async (
   roomId: string,
   label: string,
@@ -50,4 +77,12 @@ const createFile = async (
   }
 };
 
-export { getFile, deleteFile, renameFile, saveFile, createFile };
+export {
+  getFile,
+  deleteFile,
+  renameFile,
+  saveFile,
+  createFile,
+  findParentId,
+  ensureIds,
+};

@@ -1,7 +1,8 @@
 "use client";
 import { useState, useCallback } from "react";
 import { ExtendedTreeItemProps } from "@/types/FileSystemTypes";
-import useItems from "./useItems";
+import { useFileTreeStore } from "@/store/useFileTreeStore";
+import { findParentId } from "../lib/Treeutils";
 interface ContextMenuState {
   x: number;
   y: number;
@@ -9,8 +10,8 @@ interface ContextMenuState {
 }
 
 const useContextMenu = () => {
+  const { items: ITEMS } = useFileTreeStore();
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  const { findParentId, items: ITEMS } = useItems();
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent, item?: ExtendedTreeItemProps) => {

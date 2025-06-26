@@ -32,7 +32,9 @@ import { useTreeItemModel } from "@mui/x-tree-view/hooks";
 
 import useContextMenu from "@/hooks/useContextMenu";
 import ContextMenu from "./TreeContextMenu";
-import useItems from "@/hooks/useItems";
+import { useFileTreeStore } from "@/store/useFileTreeStore";
+import { usePathname } from "next/navigation";
+
 type FileType =
   | "image"
   | "pdf"
@@ -276,13 +278,24 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
 });
 
 export default function FileTree() {
-  var { items } = useItems();
-  const { contextMenu, handleContextMenu, closeContextMenu } = useContextMenu();
+  const { items } = useFileTreeStore();
+  const { fetchTree } = useFileTreeStore();
+  const roomId = usePathname().split("/")[2];
 
+  useEffect(() => {
+    fetchTree(roomId);
+  }, [roomId]);
+
+  function getItemId(items: any) {
+    return items.itemId;
+  }
+  const { contextMenu, handleContextMenu, closeContextMenu } = useContextMenu();
+  console.log(items);
   return (
     <div>
       <RichTreeView
         items={items}
+        // getItemId={getItemId}
         sx={{
           height: "fit-content",
           flexGrow: 1,
