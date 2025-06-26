@@ -19,6 +19,7 @@
     "@mui/x-tree-view": "^8.5.3",
     "@react-spring/web": "^10.0.1",
     "@uiw/react-codemirror": "^4.23.13",
+    "axios": "^1.10.0",
     "framer-motion": "^12.18.1",
     "lucide-react": "^0.522.0",
     "monaco-editor": "^0.52.2",

@@ -8,6 +8,7 @@ type FileType =
   | "trash";
 
 export type ExtendedTreeItemProps = {
+  parentId?: string;
   fileType?: FileType;
   id: string;
   label: string;

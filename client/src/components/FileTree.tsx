@@ -1,4 +1,7 @@
+"use client";
+
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { animated, useSpring } from "@react-spring/web";
 import { styled, alpha } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
@@ -26,10 +29,10 @@ import { TreeItemIcon } from "@mui/x-tree-view/TreeItemIcon";
 import { TreeItemProvider } from "@mui/x-tree-view/TreeItemProvider";
 import { TreeItemDragAndDropOverlay } from "@mui/x-tree-view/TreeItemDragAndDropOverlay";
 import { useTreeItemModel } from "@mui/x-tree-view/hooks";
-import { TreeViewBaseItem } from "@mui/x-tree-view/models";
 
 import useContextMenu from "@/hooks/useContextMenu";
 import ContextMenu from "./TreeContextMenu";
+import useItems from "@/hooks/useItems";
 type FileType =
   | "image"
   | "pdf"
@@ -44,48 +47,6 @@ type ExtendedTreeItemProps = {
   id: string;
   label: string;
 };
-
-const ITEMS: TreeViewBaseItem<ExtendedTreeItemProps>[] = [
-  {
-    id: "grid",
-    label: "Data Grid",
-    children: [
-      { id: "grid-community", label: "@mui/x-data-grid", fileType: "doc" },
-      { id: "grid-pro", label: "@mui/x-data-grid-pro", fileType: "doc" },
-      {
-        id: "grid-premium",
-        label: "@mui/x-data-grid-premium",
-        fileType: "doc",
-      },
-    ],
-  },
-  {
-    id: "pickers",
-    label: "Date and Time Pickers",
-    children: [
-      {
-        id: "pickers-community",
-        label: "@mui/x-date-pickers",
-        fileType: "doc",
-      },
-      { id: "pickers-pro", label: "@mui/x-date-pickers-pro", fileType: "doc" },
-    ],
-  },
-  {
-    id: "charts",
-    label: "Charts",
-    children: [
-      { id: "charts-community", label: "@mui/x-charts", fileType: "doc" },
-    ],
-  },
-  {
-    id: "tree-view",
-    label: "Tree View",
-    children: [
-      { id: "tree-view-community", label: "@mui/x-tree-view", fileType: "doc" },
-    ],
-  },
-];
 
 function DotIcon() {
   return (
@@ -315,12 +276,13 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
 });
 
 export default function FileTree() {
+  var { items } = useItems();
   const { contextMenu, handleContextMenu, closeContextMenu } = useContextMenu();
 
   return (
     <div>
       <RichTreeView
-        items={ITEMS}
+        items={items}
         sx={{
           height: "fit-content",
           flexGrow: 1,
