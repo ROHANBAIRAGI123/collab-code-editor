@@ -2,7 +2,8 @@ import { SignInButton, SignedIn , SignUpButton, SignedOut, SignOutButton} from "
 import Header from "@/app/(root)/_components/Header";
 import RootLayout from "./layout";
 import { Layout } from "lucide-react";
+import RoomID from "./RoomID/page";
 
 export default function Home() {
-  return <Header />
+  return (<RoomID/>);
 }

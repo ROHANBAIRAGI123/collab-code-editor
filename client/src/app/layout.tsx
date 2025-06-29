@@ -6,8 +6,8 @@ import Footer from "@/components/Footer";
 import NavigationHeader from "@/components/NavigationHeader";
 import { Toaster } from "react-hot-toast";
 import Header from "@/app/(root)/_components/Header";
-import Home from "@/app/(root)/page";
-import RoomID from "./(root)/_components/RoomID";
+import Home from "@/app/Home/[roomid]/page";
+import RoomID from "./RoomID/page";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -21,7 +21,7 @@ import RoomID from "./(root)/_components/RoomID";
 // });
 
 export const metadata: Metadata = {
-  title: "Code Craft",
+  title: "Collab Code Editor",
   description: "Share and run code snippets",
 };
 
@@ -30,20 +30,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(children?.toString);
   return (
     <ClerkProvider>
       <html lang="en">
         <body
-          className={` antialiased min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-gray-100 flex flex-col`}
+          className={`inter.classname antialiased min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-gray-100 flex flex-col`}
         >
           {/* <Home />
 
-          <Footer />
-
           <Toaster /> */}
 
-          <RoomID/>
+          {/* <RoomID /> */}
+            
+          <Toaster />
+          {children} 
+          
+
+
         </body>
       </html>
     </ClerkProvider>

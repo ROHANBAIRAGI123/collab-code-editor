@@ -1,15 +1,25 @@
 "use client";
-import React,{ useState } from "react";
+import React,{ FormEvent, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from "next/navigation";
 
 function RoomID() {
     const [roomId, setRoomId] = useState('');
     const [username, setUsername] = useState('');
+    const router = useRouter();
 
-   const createNewRoom = (e) => {
+   const createNewRoom = (e:FormEvent) => {
     e.preventDefault();
     const id = uuidv4();
     setRoomId(id);    
+   }
+
+   const joinRoom = () => {
+    if (!roomId || !username) {
+        alert("Room ID and Username are required");
+        return;
+  }
+    router.push(`/Home/${roomId}`);
    }
 
     return (
@@ -36,7 +46,7 @@ function RoomID() {
                             value={username}
                             // onKeyUp={handleInputEnter}
                         />
-                        <button className="btn joinBtn text-black">
+                        <button className="btn joinBtn text-black" onClick={joinRoom}>
                             Join
                         </button>
                         <span className="createInfo">
