@@ -4,7 +4,8 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
-import Home from "@/app/(root)/page";
+import Home from "@/app/Home/[roomid]/page";
+import RoomID from "./RoomID/page";
 import FileTree from "@/components/FileTree";
 
 import Sidebar from "@/components/Sidebar";
@@ -21,7 +22,7 @@ import Sidebar from "@/components/Sidebar";
 // });
 
 export const metadata: Metadata = {
-  title: "Code Craft",
+  title: "Collab Code Editor",
   description: "Share and run code snippets",
 };
 
@@ -30,19 +31,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(children?.toString);
   return (
     <ClerkProvider>
       <html lang="en">
         <body
           className={` antialiased min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-gray-100 flex flex-col`}
         >
-          <Home />
+          {/* <Header>
+            <NavigationHeader>
 
-          {/* <Sidebar /> */}
+            </NavigationHeader>
+          </Header>     */}
+          
+
           <Footer />
 
           <Toaster />
+          {children} 
+          
+
+
         </body>
       </html>
     </ClerkProvider>
