@@ -4,11 +4,11 @@ import { Server } from "socket.io";
 import cors from "cors";
 import { Webhooks } from "./utils/WebHooks";
 import bodyParser from "body-parser";
-// import { codeExecution } from "./models/Connection.model";
+import "@dotenvx/dotenvx/config";
 
 //import routers
 import healthCheckRouter from "./routers/healthCheck.routers";
-
+import fileRouter from "./routers/File.routers";
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -26,6 +26,7 @@ app.use(express.static("public"));
 
 // routes
 app.use("/api/health", healthCheckRouter);
+app.use("/api/file", fileRouter);
 
 io.on("connection", (socket) => {
   console.log("a user connected on socket", socket.data);
@@ -33,6 +34,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", async ({ roomId }) => {
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
+
     // const currentCode = await codeExecution.findOne({ roomId });
     // if (currentCode) {
     //   socket.emit("receive-changes", currentCode.currentCodeContent);
