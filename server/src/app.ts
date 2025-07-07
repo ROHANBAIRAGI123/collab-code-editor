@@ -9,6 +9,7 @@ import "@dotenvx/dotenvx/config";
 //import routers
 import healthCheckRouter from "./routers/healthCheck.routers";
 import fileRouter from "./routers/File.routers";
+import { codeExecution } from "./models/Connection.model";
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -29,35 +30,36 @@ app.use("/api/health", healthCheckRouter);
 app.use("/api/file", fileRouter);
 
 io.on("connection", (socket) => {
-  console.log("a user connected on socket", socket.data);
-
   socket.on("join-room", async ({ roomId }) => {
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
 
-    // const currentCode = await codeExecution.findOne({ roomId });
-    // if (currentCode) {
-    //   socket.emit("receive-changes", currentCode.currentCodeContent);
-    // }
+    const currentCode = await codeExecution.findOne({ roomId });
+    if (currentCode) {
+      socket.emit("receive-changes", currentCode.currentCodeContent);
+      console.log("code loaded", currentCode.currentCodeContent);
+    }
   });
 
   socket.on("code-change", async ({ roomId, code }) => {
     socket.to(roomId).emit("receive-changes", code);
-    // const currentCode = await codeExecution.findOne({ roomId });
-    // if (currentCode) {
-    //   currentCode.currentCodeContent = code;
-    //   await currentCode.save();
-    // } else {
-    //   const newCode = new codeExecution({
-    //     roomId: roomId,
-    //     currentCodeContent: code,
-    //   });
-    //   await newCode.save();
-    // }
+    const currentCode = await codeExecution.findOne({ roomId });
+    if (currentCode) {
+      currentCode.currentCodeContent = code;
+      await currentCode.save();
+      console.log("code saved to db", code);
+    } else {
+      const newCode = new codeExecution({
+        roomId: roomId,
+        currentCodeContent: code,
+      });
+      await newCode.save();
+      console.log("code saved");
+    }
   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected from socket");
+  socket.on("disconnect", (reason) => {
+    console.log("user disconnected from socket", reason);
   });
 });
 

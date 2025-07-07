@@ -1,21 +1,24 @@
 "use client";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import * as monaco from "monaco-editor"; // Only for types
 import { socket } from "@/lib/socket";
 import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
+import { debounce } from "lodash";
 function EditorPanel() {
   const clerk = useClerk();
-
+  const pathName = usePathname();
+  const roomId = pathName.split("/")[2];
   //for editor
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const pendingCodeRef = useRef<string | null>(null);
   const isRemoteChange = useRef(false);
 
   useEffect(() => {
@@ -23,8 +26,8 @@ function EditorPanel() {
       socket.connect();
     }
 
-    socket.emit("join-room", { roomId: "1" });
     socket.on("receive-changes", handleReceiveChanges);
+    socket.emit("join-room", { roomId: roomId });
 
     return () => {
       socket.off("receive-changes", handleReceiveChanges);
@@ -38,20 +41,32 @@ function EditorPanel() {
     editor: monaco.editor.IStandaloneCodeEditor
   ) => {
     editorRef.current = editor;
+    if (pendingCodeRef.current) {
+      isRemoteChange.current = true;
+      editor.setValue(pendingCodeRef.current);
+      console.log("🚀 Flushed pending code on mount");
+      pendingCodeRef.current = null;
+    }
   };
+  const emitCodeChange = useCallback(
+    debounce((value: string) => {
+      socket.emit("code-change", { roomId, code: value });
+      console.log("Debounced code emit:", value);
+    }, 500),
+    []
+  );
   const handleChange = (value: string | undefined) => {
     if (isRemoteChange.current) {
       isRemoteChange.current = false;
       return;
     }
     if (value !== undefined) {
-      //:TODO add room id
-      socket.emit("code-change", { roomId: "1", code: value });
-      console.log("Code emmitted:", value);
+      emitCodeChange(value);
     }
   };
 
   const updateEditorContent = (newCode: string) => {
+    console.log("Updating editor content:", newCode);
     const editor = editorRef.current;
     if (editor && editor.getValue() !== newCode) {
       const currentCode = editor.getValue();
@@ -63,6 +78,9 @@ function EditorPanel() {
       if (currentPosition) {
         editor.setPosition(currentPosition);
       }
+    } else {
+      console.warn("❌ Editor not ready yet");
+      pendingCodeRef.current = newCode;
     }
   };
 
@@ -109,10 +127,14 @@ function EditorPanel() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1e1e2e] ring-1 ring-white/5">
-              <p className="text-white font-bold font-stretch-50% font-mono">&lt;/&gt;</p>
+              <p className="text-white font-bold font-stretch-50% font-mono">
+                &lt;/&gt;
+              </p>
             </div>
             <div>
-              <h2 className="text-sm font-medium text-white">Collab Code Editor</h2>
+              <h2 className="text-sm font-medium text-white">
+                Collab Code Editor
+              </h2>
               <p className="text-xs text-gray-500">
                 Write and execute your code
               </p>
