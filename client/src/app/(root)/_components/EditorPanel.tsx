@@ -1,6 +1,6 @@
 "use client";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import * as monaco from "monaco-editor"; // Only for types
 import { socket } from "@/lib/socket";
 import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
@@ -11,12 +11,14 @@ import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
+import { debounce } from "lodash";
 function EditorPanel() {
   const clerk = useClerk();
   const pathName = usePathname();
   const roomId = pathName.split("/")[2];
   //for editor
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const pendingCodeRef = useRef<string | null>(null);
   const isRemoteChange = useRef(false);
 
   useEffect(() => {
@@ -24,8 +26,8 @@ function EditorPanel() {
       socket.connect();
     }
 
-    socket.emit("join-room", { roomId: roomId });
     socket.on("receive-changes", handleReceiveChanges);
+    socket.emit("join-room", { roomId: roomId });
 
     return () => {
       socket.off("receive-changes", handleReceiveChanges);
@@ -39,20 +41,32 @@ function EditorPanel() {
     editor: monaco.editor.IStandaloneCodeEditor
   ) => {
     editorRef.current = editor;
+    if (pendingCodeRef.current) {
+      isRemoteChange.current = true;
+      editor.setValue(pendingCodeRef.current);
+      console.log("🚀 Flushed pending code on mount");
+      pendingCodeRef.current = null;
+    }
   };
+  const emitCodeChange = useCallback(
+    debounce((value: string) => {
+      socket.emit("code-change", { roomId, code: value });
+      console.log("Debounced code emit:", value);
+    }, 500),
+    []
+  );
   const handleChange = (value: string | undefined) => {
     if (isRemoteChange.current) {
       isRemoteChange.current = false;
       return;
     }
     if (value !== undefined) {
-      //:TODO add room id
-      socket.emit("code-change", { roomId: roomId, code: value });
-      console.log("Code emmitted:", value);
+      emitCodeChange(value);
     }
   };
 
   const updateEditorContent = (newCode: string) => {
+    console.log("Updating editor content:", newCode);
     const editor = editorRef.current;
     if (editor && editor.getValue() !== newCode) {
       const currentCode = editor.getValue();
@@ -64,6 +78,9 @@ function EditorPanel() {
       if (currentPosition) {
         editor.setPosition(currentPosition);
       }
+    } else {
+      console.warn("❌ Editor not ready yet");
+      pendingCodeRef.current = newCode;
     }
   };
 
