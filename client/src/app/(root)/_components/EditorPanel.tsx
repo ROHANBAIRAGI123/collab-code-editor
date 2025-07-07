@@ -6,14 +6,15 @@ import { socket } from "@/lib/socket";
 import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 function EditorPanel() {
   const clerk = useClerk();
-
+  const pathName = usePathname();
+  const roomId = pathName.split("/")[2];
   //for editor
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const isRemoteChange = useRef(false);
@@ -23,7 +24,7 @@ function EditorPanel() {
       socket.connect();
     }
 
-    socket.emit("join-room", { roomId: "1" });
+    socket.emit("join-room", { roomId: roomId });
     socket.on("receive-changes", handleReceiveChanges);
 
     return () => {
@@ -46,7 +47,7 @@ function EditorPanel() {
     }
     if (value !== undefined) {
       //:TODO add room id
-      socket.emit("code-change", { roomId: "1", code: value });
+      socket.emit("code-change", { roomId: roomId, code: value });
       console.log("Code emmitted:", value);
     }
   };
@@ -109,10 +110,14 @@ function EditorPanel() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1e1e2e] ring-1 ring-white/5">
-              <p className="text-white font-bold font-stretch-50% font-mono">&lt;/&gt;</p>
+              <p className="text-white font-bold font-stretch-50% font-mono">
+                &lt;/&gt;
+              </p>
             </div>
             <div>
-              <h2 className="text-sm font-medium text-white">Collab Code Editor</h2>
+              <h2 className="text-sm font-medium text-white">
+                Collab Code Editor
+              </h2>
               <p className="text-xs text-gray-500">
                 Write and execute your code
               </p>
