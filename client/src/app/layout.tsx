@@ -42,9 +42,6 @@ export default function RootLayout({
 
             </NavigationHeader>
           </Header>     */}
-          
-
-          <Footer />
 
           <Toaster />
           {children} 

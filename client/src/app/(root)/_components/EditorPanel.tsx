@@ -101,10 +101,8 @@ function EditorPanel() {
   }, [setFontSize]);
 
   const handleRefresh = () => {
-    const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
-    console.log(defaultCode);
-    // if (editor) editor.setValue(defaultCode);
-    localStorage.removeItem(`editor-code-${language}`);
+    const editor = editorRef.current;
+    if(editor) editor.setValue(' ');
   };
 
   const handleEditorChange = (value: string | undefined) => {

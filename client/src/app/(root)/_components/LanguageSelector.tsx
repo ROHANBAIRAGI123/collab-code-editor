@@ -148,13 +148,13 @@ function LanguageSelector() {
                         />
                       )}
 
-                      {isLocked ? (
+                      {/* {isLocked ? (
                         <Lock className="w-4 h-4 text-gray-500" />
                       ) : (
                         language === lang.id && (
                           <Sparkles className="w-4 h-4 text-blue-400 animate-pulse" />
                         )
-                      )}
+                      )} */}
                     </button>
                   </motion.div>
                 );
