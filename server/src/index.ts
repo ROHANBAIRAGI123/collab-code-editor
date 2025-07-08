@@ -1,14 +1,15 @@
-import dotenv from "dotenv";
-import { app } from "./app";
+import { httpServer } from "./app";
 import connectDB from "./db";
-dotenv.config({
-  path: "./.env",
-});
 
-const PORT: number = Number(process.env.PORT) || 8000;
+const PORT: number = Number(process.env.PORT) || 8001;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running at Port: ${PORT}`);
+  httpServer.listen(PORT, () => {
+    console.log(
+      `> Express/Socket.IO Backend Server is running at Port: ${PORT}`
+    );
+    console.log(
+      `> Your Next.js App (frontend) should be running separately on http://localhost:3000`
+    );
   });
 });
