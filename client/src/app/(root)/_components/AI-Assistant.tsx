@@ -2,6 +2,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FiCpu } from "react-icons/fi";
 
 export default function AI() {
   const [open, setOpen] = useState(false); // Initially closed
@@ -58,7 +59,7 @@ export default function AI() {
           className="bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors cursor-pointer"
           aria-label="Open AI Assistant"
         >
-          Icon
+          <img src="chat-bot.jpg" alt="AI" />
         </motion.button>
       )}
 
@@ -90,13 +91,13 @@ export default function AI() {
             <h2 className="text-xl font-semibold mb-4 pt-8">AI Assistant</h2>
             {/* Content of your AI assistant goes here */}
             <div className="flex flex-col h-[calc(100%-60px)]">
-              <div className="flex-grow overflow-y-auto">
+              <div className="flex-grow overflow-y-auto flex flex-col">
                 <p>Hello! How can I help you today?</p>
                 {/* Example chat messages */}
-                <div className="bg-gray-800 p-3 rounded-lg my-2">
+                <div className="bg-[#2f3150] p-3 rounded-lg my-2 w-[75%] self-end">
                   <p className="text-sm">User: What's the weather like?</p>
                 </div>
-                <div className="bg-blue-700 p-3 rounded-lg my-2 self-end">
+                <div className="bg-[#6350ce] p-3 rounded-lg my-2 w-[75%]" >
                   <p className="text-sm">
                     AI: I can't provide real-time weather information.
                   </p>
