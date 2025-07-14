@@ -6,13 +6,13 @@ import "@dotenvx/dotenvx/config";
 const together = new Together();
 export const askAssistant = asyncHandler(
   async (req: Request, res: Response) => {
-    const { prompt, code } = req.body;
+    const { prompt } = req.body;
     try {
       const response = await together.chat.completions.create({
         model: "deepseek-ai/DeepSeek-V3",
         messages: [
           { role: "system", content: "You are a helpful coding assistant." },
-          { role: "user", content: `${prompt}\n\n${code}` },
+          { role: "user", content: `${prompt}` },
         ],
       });
 
@@ -35,6 +35,7 @@ export const askAssistant = asyncHandler(
 
 export const askSuggestion = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log(`User request recieved for suggestion`);
     const { code } = req.body;
     try {
       const response = await together.chat.completions.create({
@@ -43,7 +44,7 @@ export const askSuggestion = asyncHandler(
           {
             role: "system",
             content:
-              "You are a helpful coding assistant.Your work is to provide suggestion based on the code provided",
+              "You are a helpful coding assistant.Your work is to provide suggestion based on the code provided. Try to give answer without markdown (in simple words and normal code).",
           },
           { role: "user", content: `${code}` },
         ],

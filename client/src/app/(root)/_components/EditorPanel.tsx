@@ -13,6 +13,7 @@ import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 import { debounce } from "lodash";
 import axios from "axios";
+import { useAssistantStore } from "@/store/useAssistantStore";
 function EditorPanel() {
   const clerk = useClerk();
   const pathName = usePathname();
@@ -21,6 +22,10 @@ function EditorPanel() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const pendingCodeRef = useRef<string | null>(null);
   const isRemoteChange = useRef(false);
+  const setShowAssistant = useAssistantStore((state) => state.setShowAssistant);
+  const setAssistantResponse = useAssistantStore(
+    (state) => state.setAssistantResponse
+  );
 
   useEffect(() => {
     if (!socket.connected) {
@@ -62,6 +67,8 @@ function EditorPanel() {
             code,
           }
         );
+        setShowAssistant(true);
+        setAssistantResponse(response.data.answer);
         updateEditorContent(response.data.answer);
       },
     });
