@@ -6,13 +6,18 @@ import "@dotenvx/dotenvx/config";
 const together = new Together();
 export const askAssistant = asyncHandler(
   async (req: Request, res: Response) => {
-    const { prompt } = req.body;
+    console.log("User request recieved for ai assistant");
+    const { prompt, code } = req.body;
     try {
       const response = await together.chat.completions.create({
         model: "deepseek-ai/DeepSeek-V3",
         messages: [
-          { role: "system", content: "You are a helpful coding assistant." },
-          { role: "user", content: `${prompt}` },
+          {
+            role: "system",
+            content:
+              "You are a helpful coding assistant. You can use code for getting context",
+          },
+          { role: "user", content: `${prompt}/n/n${code}` },
         ],
       });
 

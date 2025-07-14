@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAssistantStore } from "@/store/useAssistantStore";
+import { useCodeEditorStore } from "@/store/useCodeEditorStore";
+import axios from "axios";
 
 export default function AI() {
   const showAssistant = useAssistantStore((state) => state.showAssistant);
@@ -15,12 +17,20 @@ export default function AI() {
   const [inputValue, setInputValue] = useState("");
   const setUserQuery = useAssistantStore((state) => state.setUserQuery);
   const setShowAssistant = useAssistantStore((state) => state.setShowAssistant);
+  const setAssistantResponse = useAssistantStore(
+    (state) => state.setAssistantResponse
+  );
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault(); // Prevent default form submission behavior
     setUserQuery(inputValue);
-    setInputValue(""); // Clear the input after sending
-    // You might also want to add logic here to handle sending the query to your assistant
+    const code = useCodeEditorStore((state) => state.getCode());
+    const response = await axios.post("http://localhost:8001/api/ai/ask-ai", {
+      prompt: inputValue,
+      code: code,
+    });
+    setAssistantResponse(response.data.answer);
+    setInputValue(""); // Clear the input
   };
 
   const MIN_WIDTH = 250;
