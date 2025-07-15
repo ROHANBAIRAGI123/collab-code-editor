@@ -69,7 +69,7 @@ function EditorPanel() {
         );
         setShowAssistant(true);
         setAssistantResponse(response.data.answer);
-        updateEditorContent(response.data.answer);
+//         updateEditorContent(response.data.answer);
       },
     });
   };
