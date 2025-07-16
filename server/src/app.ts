@@ -18,8 +18,7 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
   },
 });
-
-app.use(cors({ origin: process.env.CORS_ORIGIN }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -37,7 +36,6 @@ io.on("connection", (socket) => {
     const currentCode = await codeExecution.findOne({ roomId });
     if (currentCode) {
       socket.emit("receive-changes", currentCode.currentCodeContent);
-      console.log("code loaded", currentCode.currentCodeContent);
     }
   });
 
@@ -47,14 +45,12 @@ io.on("connection", (socket) => {
     if (currentCode) {
       currentCode.currentCodeContent = code;
       await currentCode.save();
-      console.log("code saved to db", code);
     } else {
       const newCode = new codeExecution({
         roomId: roomId,
         currentCodeContent: code,
       });
       await newCode.save();
-      console.log("code saved");
     }
   });
 

@@ -1,7 +1,7 @@
 import { CodeEditorState } from "./../types/index";
 import { LANGUAGE_CONFIG } from "@/app/(root)/_constants";
 import { create } from "zustand";
-import { Monaco } from "@monaco-editor/react";
+import * as monaco from "monaco-editor";
 
 const getInitialState = () => {
   // if we're on the server, return default values
@@ -33,14 +33,16 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
     output: "",
     isRunning: false,
     error: null,
-    editor: null,
+    editor: null as monaco.editor.IStandaloneCodeEditor | null,
     executionResult: null,
 
     getCode: () => get().editor?.getValue() || "",
 
-    setEditor: (editor: Monaco) => {
-      const savedCode = localStorage.getItem(`editor-code-${get().language}`);
-      if (savedCode) editor.setValue(savedCode);
+    setEditor: (editor: monaco.editor.IStandaloneCodeEditor | null) => {
+      if (editor) {
+        const savedCode = localStorage.getItem(`editor-code-${get().language}`);
+        if (savedCode) editor.setValue(savedCode);
+      }
 
       set({ editor });
     },
@@ -102,7 +104,10 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
 
         // handle API-level erros
         if (data.message) {
-          set({ error: data.message, executionResult: { code, output: "", error: data.message } });
+          set({
+            error: data.message,
+            executionResult: { code, output: "", error: data.message },
+          });
           return;
         }
 
@@ -158,4 +163,5 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
   };
 });
 
-export const getExecutionResult = () => useCodeEditorStore.getState().executionResult;
+export const getExecutionResult = () =>
+  useCodeEditorStore.getState().executionResult;

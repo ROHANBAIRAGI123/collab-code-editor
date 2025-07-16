@@ -12,6 +12,8 @@ import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 import { debounce } from "lodash";
+import axios from "axios";
+import { useAssistantStore } from "@/store/useAssistantStore";
 function EditorPanel() {
   const clerk = useClerk();
   const pathName = usePathname();
@@ -20,6 +22,10 @@ function EditorPanel() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const pendingCodeRef = useRef<string | null>(null);
   const isRemoteChange = useRef(false);
+  const setShowAssistant = useAssistantStore((state) => state.setShowAssistant);
+  const setAssistantResponse = useAssistantStore(
+    (state) => state.setAssistantResponse
+  );
 
   useEffect(() => {
     if (!socket.connected) {
@@ -44,14 +50,32 @@ function EditorPanel() {
     if (pendingCodeRef.current) {
       isRemoteChange.current = true;
       editor.setValue(pendingCodeRef.current);
-      console.log("🚀 Flushed pending code on mount");
+      console.log("Flushed pending code on mount");
       pendingCodeRef.current = null;
     }
+    editor.addAction({
+      id: "myPaste",
+      label: "Ask AI for Suggestion",
+      precondition: undefined,
+      contextMenuGroupId: "MYPORTION",
+      contextMenuOrder: 1.5,
+      run: async (editor) => {
+        const code = editor.getValue();
+        const response = await axios.post(
+          "http://localhost:8001/api/ai/ask-suggestion",
+          {
+            code,
+          }
+        );
+        setShowAssistant(true);
+        setAssistantResponse(response.data.answer);
+//         updateEditorContent(response.data.answer);
+      },
+    });
   };
   const emitCodeChange = useCallback(
     debounce((value: string) => {
       socket.emit("code-change", { roomId, code: value });
-      console.log("Debounced code emit:", value);
     }, 500),
     []
   );
@@ -66,7 +90,6 @@ function EditorPanel() {
   };
 
   const updateEditorContent = (newCode: string) => {
-    console.log("Updating editor content:", newCode);
     const editor = editorRef.current;
     if (editor && editor.getValue() !== newCode) {
       const currentCode = editor.getValue();
@@ -102,7 +125,11 @@ function EditorPanel() {
 
   const handleRefresh = () => {
     const editor = editorRef.current;
-    if(editor) editor.setValue(' ');
+    if (editor) editor.setValue(" ");
+    const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
+    console.log(defaultCode);
+    // if (editor) editor.setValue(defaultCode);
+    localStorage.removeItem(`editor-code-${language}`);
   };
 
   const handleEditorChange = (value: string | undefined) => {
