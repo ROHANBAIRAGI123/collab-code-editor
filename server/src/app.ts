@@ -10,11 +10,12 @@ import "@dotenvx/dotenvx/config";
 import healthCheckRouter from "./routers/healthCheck.routers";
 import AIRouter from "./routers/AI.routes";
 import { codeExecution } from "./models/Connection.model";
+import connectionRouter from "./routers/connection.routes"
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    origin:   process.env.CORS_ORIGIN || "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -27,6 +28,7 @@ app.use(express.static("public"));
 // routes
 app.use("/api/health", healthCheckRouter);
 app.use("/api/ai", AIRouter);
+app.use("/api", connectionRouter)
 
 io.on("connection", (socket) => {
   socket.on("join-room", async ({ roomId }) => {

@@ -5,26 +5,44 @@ import { useUser } from "@clerk/nextjs";
 // import { useMutation } from "convex/react";
 import { motion } from "framer-motion";
 import { Loader2, Play } from "lucide-react";
+import axios from "axios";
+import { usePathname } from "next/navigation";
 // import { api } from "../../../../convex/_generated/api";
 
 function RunButton() {
   const { user } = useUser();
-  const { runCode, isRunning } = useCodeEditorStore();
+  const { runCode, isRunning, language , executionResult } = useCodeEditorStore();
+  const pathName = usePathname();
+    const roomId = pathName.split("/")[2];
   // const saveExecution = useMutation(api.codeExecutions.saveExecution);
-
+  
   const handleRun = async () => {
-    await runCode();
-    const result = getExecutionResult();
+    
+    const response = await axios.get(
+          "http://localhost:8001/api/getCode/",
+          {
+            headers: {
+              roomId: roomId,
+            },
+          }
+        );
 
-    if (user && result) {
-      // await saveExecution({
-      //   language,
-      //   code: result.code,
-      //   output: result.output || undefined,
-      //   error: result.error || undefined,
-      // });
-    }
+        console.log(response.data);
+        
+
+    const result = getExecutionResult();
+    
+
+    // if (user && result) {
+    //   await saveExecution({
+    //     language,
+    //     code: result.code,
+    //     output: result.output || undefined,
+    //     error: result.error || undefined,
+    //   });
+    // }
   };
+  
 
   return (
     <motion.button
