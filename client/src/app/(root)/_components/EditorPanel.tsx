@@ -14,6 +14,7 @@ import useMounted from "@/hooks/useMounted";
 import { debounce } from "lodash";
 import axios from "axios";
 import { useAssistantStore } from "@/store/useAssistantStore";
+import Image from "next/image";
 function EditorPanel() {
   const clerk = useClerk();
   const pathName = usePathname();
@@ -152,9 +153,7 @@ function EditorPanel() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1e1e2e] ring-1 ring-white/5">
-              <p className="text-white font-bold font-stretch-50% font-mono">
-                &lt;/&gt;
-              </p>
+              <Image src={"/" + language + ".png"} alt="Logo" width={24} height={24} />
             </div>
             <div>
               <h2 className="text-sm font-medium text-white">

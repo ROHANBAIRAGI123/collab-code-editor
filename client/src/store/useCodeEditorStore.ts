@@ -73,9 +73,8 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       });
     },
 
-    runCode: async () => {
-      const { language, getCode } = get();
-      const code = getCode();
+    runCode: async (code: string) => {
+      const { language } = get();
 
       if (!code) {
         set({ error: "Please enter some code" });
