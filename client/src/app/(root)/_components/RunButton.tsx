@@ -1,19 +1,33 @@
 "use client";
 
-import { getExecutionResult, useCodeEditorStore } from "@/store/useCodeEditorStore";
+import {
+  getExecutionResult,
+  useCodeEditorStore,
+} from "@/store/useCodeEditorStore";
 import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 // import { useMutation } from "convex/react";
 import { motion } from "framer-motion";
 import { Loader2, Play } from "lucide-react";
+import { usePathname } from "next/navigation";
 // import { api } from "../../../../convex/_generated/api";
 
 function RunButton() {
   const { user } = useUser();
   const { runCode, isRunning } = useCodeEditorStore();
+  const pathName = usePathname();
+  const roomId = pathName.split("/")[2];
   // const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
   const handleRun = async () => {
-    await runCode();
+    const response = await axios.get("http://localhost:8001/api/getCode/", {
+      params: {
+        roomId: roomId,
+      },
+    });
+
+    console.log(response.data.data.currentCodeContent);
+    runCode(response.data.data.currentCodeContent);
     const result = getExecutionResult();
 
     if (user && result) {
@@ -48,7 +62,9 @@ function RunButton() {
               <Loader2 className="w-4 h-4 animate-spin text-white/70" />
               <div className="absolute inset-0 blur animate-pulse" />
             </div>
-            <span className="text-sm font-medium text-white/90">Executing...</span>
+            <span className="text-sm font-medium text-white/90">
+              Executing...
+            </span>
           </>
         ) : (
           <>

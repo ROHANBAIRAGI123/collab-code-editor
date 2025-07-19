@@ -9,6 +9,7 @@ import "@dotenvx/dotenvx/config";
 //import routers
 import healthCheckRouter from "./routers/healthCheck.routers";
 import AIRouter from "./routers/AI.routes";
+import connectionRouter from "./routers/connection.routers";
 import { codeExecution } from "./models/Connection.model";
 const app = express();
 const httpServer = createServer(app);
@@ -27,6 +28,7 @@ app.use(express.static("public"));
 // routes
 app.use("/api/health", healthCheckRouter);
 app.use("/api/ai", AIRouter);
+app.use("/api", connectionRouter);
 
 io.on("connection", (socket) => {
   socket.on("join-room", async ({ roomId }) => {
