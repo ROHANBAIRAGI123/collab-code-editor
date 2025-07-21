@@ -20,6 +20,9 @@ function RoomID() {
       toast.error('Room_ID & Username is required');      
       return;
     }
+    navigator.clipboard
+    .writeText(roomId);
+
     router.push(`/Home/${roomId}`);
     toast.success("Room Created Successfully")
   };
