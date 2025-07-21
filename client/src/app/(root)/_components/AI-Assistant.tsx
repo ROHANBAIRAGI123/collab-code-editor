@@ -4,7 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAssistantStore } from "@/store/useAssistantStore";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
+import { RiRobot3Fill } from "react-icons/ri";
 import axios from "axios";
+import { Image } from "lucide-react";
 
 export default function AI() {
   const showAssistant = useAssistantStore((state) => state.showAssistant);
@@ -75,6 +77,7 @@ export default function AI() {
       {/* Toggle Button for AI Assistant */}
       {!showAssistant && (
         <motion.button
+          key="assistant-button"
           initial={{ x: 100, opacity: 0 }} // Starts off-screen to the right
           animate={{ x: 0, opacity: 1 }} // Slides in from the right
           exit={{ x: 100, opacity: 0 }} // Slides out to the right
@@ -83,7 +86,7 @@ export default function AI() {
           className="bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors cursor-pointer"
           aria-label="Open AI Assistant"
         >
-          Icon
+          <RiRobot3Fill size={28}/>
         </motion.button>
       )}
 

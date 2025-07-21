@@ -16,7 +16,6 @@ export default function Home({ params }: { params: { roomId: string } }) {
           <AI />
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
