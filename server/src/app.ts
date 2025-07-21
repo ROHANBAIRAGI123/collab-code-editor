@@ -2,23 +2,21 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import { Webhooks } from "./utils/WebHooks";
-import bodyParser from "body-parser";
 import "@dotenvx/dotenvx/config";
 
 //import routers
 import healthCheckRouter from "./routers/healthCheck.routers";
-import fileRouter from "./routers/File.routers";
+import AIRouter from "./routers/AI.routes";
+import connectionRouter from "./routers/connection.routers";
 import { codeExecution } from "./models/Connection.model";
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    origin: process.env.CORS_ORIGIN,
     methods: ["GET", "POST"],
   },
 });
-
 app.use(cors({ origin: process.env.CORS_ORIGIN }));
 
 app.use(express.json({ limit: "16kb" }));
@@ -27,7 +25,8 @@ app.use(express.static("public"));
 
 // routes
 app.use("/api/health", healthCheckRouter);
-app.use("/api/file", fileRouter);
+app.use("/api/ai", AIRouter);
+app.use("/api", connectionRouter);
 
 io.on("connection", (socket) => {
   socket.on("join-room", async ({ roomId }) => {
@@ -37,7 +36,6 @@ io.on("connection", (socket) => {
     const currentCode = await codeExecution.findOne({ roomId });
     if (currentCode) {
       socket.emit("receive-changes", currentCode.currentCodeContent);
-      console.log("code loaded", currentCode.currentCodeContent);
     }
   });
 
@@ -47,14 +45,12 @@ io.on("connection", (socket) => {
     if (currentCode) {
       currentCode.currentCodeContent = code;
       await currentCode.save();
-      console.log("code saved to db", code);
     } else {
       const newCode = new codeExecution({
         roomId: roomId,
         currentCodeContent: code,
       });
       await newCode.save();
-      console.log("code saved");
     }
   });
 
@@ -62,14 +58,5 @@ io.on("connection", (socket) => {
     console.log("user disconnected from socket", reason);
   });
 });
-
-app.post(
-  "/api/webhook",
-  bodyParser.raw({ type: "application/json" }),
-  (req, res) => {
-    console.log("webhook called");
-    Webhooks(req, res);
-  }
-);
 
 export { httpServer, io };
