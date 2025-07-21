@@ -10,7 +10,6 @@ const connectDB = async (): Promise<void> => {
       `Database connected succesfully ! \n Name: ${connection.connection.name}`
     );
   } catch (error) {
-    console.log(MONGODB_URI, DB_NAME);
     console.log(`Database not connected, ${error}`);
     process.exit(1);
   }

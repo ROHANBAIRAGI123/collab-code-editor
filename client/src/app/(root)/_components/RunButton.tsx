@@ -26,7 +26,6 @@ function RunButton() {
       },
     });
 
-    console.log(response.data.data.currentCodeContent);
     runCode(response.data.data.currentCodeContent);
     const result = getExecutionResult();
 

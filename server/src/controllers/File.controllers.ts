@@ -3,7 +3,6 @@ import asyncHandler from "../utils/asyncHandler";
 import logger from "../utils/logger";
 import { Request, Response } from "express";
 import { File } from "../models/File.model";
-import buildTree from "../utils/TreeBuilder";
 
 // Health check for API
 const createFile = asyncHandler(async (req: Request, res: Response) => {
@@ -87,9 +86,7 @@ const saveFile = asyncHandler(async (req: Request, res: Response) => {
 const getTreeByRoomId = asyncHandler(async (req: Request, res: Response) => {
   const { roomId } = req.params;
   const files = await File.find({ roomId });
-
-  const tree = buildTree(files);
-  res.status(200).json(tree);
+  res.status(200).json(files);
 });
 
 export {

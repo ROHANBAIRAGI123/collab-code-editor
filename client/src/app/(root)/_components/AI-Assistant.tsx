@@ -22,17 +22,17 @@ export default function AI() {
   const setAssistantResponse = useAssistantStore(
     (state) => state.setAssistantResponse
   );
+  const code = useCodeEditorStore((state) => state.getCode());
 
   const handleSubmit = async (e: any) => {
     e.preventDefault(); // Prevent default form submission behavior
     setUserQuery(inputValue);
-    const code = useCodeEditorStore((state) => state.getCode());
+    setInputValue(""); // Clear the input
     const response = await axios.post("http://localhost:8001/api/ai/ask-ai", {
       prompt: inputValue,
       code: code,
     });
     setAssistantResponse(response.data.answer);
-    setInputValue(""); // Clear the input
   };
 
   const MIN_WIDTH = 250;
@@ -86,7 +86,7 @@ export default function AI() {
           className="bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors cursor-pointer"
           aria-label="Open AI Assistant"
         >
-          <RiRobot3Fill size={28}/>
+          <RiRobot3Fill size={28} />
         </motion.button>
       )}
 

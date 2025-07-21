@@ -15,7 +15,7 @@ export const askAssistant = asyncHandler(
           {
             role: "system",
             content:
-              "You are a helpful coding assistant. You can use code for getting context",
+              "You are a helpful coding assistant. You can use code for getting context.  Try to give answer without markdown (in simple words and normal code).",
           },
           { role: "user", content: `${prompt}/n/n${code}` },
         ],
