@@ -56,7 +56,7 @@ function RoomID() {
               Join
             </button>
             <span className="createInfo">
-              If you don't have an invite then create &nbsp ;
+              If you don&rsquo;t have an invite then create&nbsp;
               <a onClick={createNewRoom} href="" className="createNewBtn">
                 new room
               </a>
