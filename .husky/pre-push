@@ -3,4 +3,5 @@
 
 export PATH="$HOME/.nvm/versions/node/v22.16.0/bin:$PATH"
 
-tsc --noEmit --incremental false -p client/tsconfig.json
+npx tsc --noEmit --incremental false -p client/tsconfig.json
+
