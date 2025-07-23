@@ -1,10 +1,9 @@
-import Footer from "@/components/Footer";
 import EditorPanel from "../../(root)/_components/EditorPanel";
 import Header from "../../(root)/_components/Header";
 import OutputPanel from "../../(root)/_components/OutputPanel";
 import AI from "@/app/(root)/_components/AI-Assistant";
 
-export default function Home({ params }: { params: { roomId: string } }) {
+export default function Home({}: { params: { roomId: string } }) {
   return (
     <div className="min-h-screen">
       <div className="max-w-[1800px] mx-auto p-4">

@@ -1,7 +1,7 @@
 "use client";
 import React, { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 function RoomID() {
@@ -17,14 +17,13 @@ function RoomID() {
 
   const joinRoom = () => {
     if (!roomId || !username) {
-      toast.error('Room_ID & Username is required');      
+      toast.error("Room_ID & Username is required");
       return;
     }
-    navigator.clipboard
-    .writeText(roomId);
+    navigator.clipboard.writeText(roomId);
 
     router.push(`/Home/${roomId}`);
-    toast.success("Room Created Successfully")
+    toast.success("Room Created Successfully");
   };
 
   return (
@@ -52,12 +51,12 @@ function RoomID() {
               value={username}
               // onKeyUp={handleInputEnter}
             />
-    
+
             <button className="btn joinBtn text-black" onClick={joinRoom}>
               Join
             </button>
             <span className="createInfo">
-              If you don't have an invite then create &nbsp;
+              If you don't have an invite then create &nbsp ;
               <a onClick={createNewRoom} href="" className="createNewBtn">
                 new room
               </a>

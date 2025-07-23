@@ -66,7 +66,7 @@ const createFile = async (
   try {
     const response = await axios.post(`http://localhost:8001/api/file/create`, {
       id: Date.now().toString(),
-      roomId: "123",
+      roomId: roomId,
       label: label,
       fileType: fileType,
       parentId: parentId,

@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { ExtendedTreeItemProps } from "@/types/FileSystemTypes";
 import { createFile, deleteFile, renameFile } from "../lib/Treeutils";
 import { usePathname } from "next/navigation";

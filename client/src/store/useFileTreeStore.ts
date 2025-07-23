@@ -23,7 +23,7 @@ export const useFileTreeStore = create<FileTreeState>((set) => ({
 
   setItems: (items) => set({ items }),
 
-  fetchTree: async (roomId) => {
+  fetchTree: async () => {
     const response = await axios.get(`http://localhost:8001/api/file/tree/123`);
     const tree = ensureIds(response.data);
     set({ items: tree });

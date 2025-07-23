@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect } from "react";
 import { animated, useSpring } from "@react-spring/web";
 import { styled, alpha } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
@@ -227,8 +226,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   props: CustomTreeItemProps,
   ref: React.Ref<HTMLLIElement>
 ) {
-  const { id, itemId, label, disabled, children, onRightClick, ...other } =
-    props;
+  const { id, itemId, label, disabled, children, ...other } = props;
 
   const {
     getContextProviderProps,
@@ -282,13 +280,10 @@ export default function FileTree() {
   const { fetchTree } = useFileTreeStore();
   const roomId = usePathname().split("/")[2];
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchTree(roomId);
   }, [roomId]);
 
-  function getItemId(items: any) {
-    return items.itemId;
-  }
   const { contextMenu, handleContextMenu, closeContextMenu } = useContextMenu();
   console.log(items);
   return (

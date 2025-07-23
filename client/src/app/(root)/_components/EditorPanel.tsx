@@ -7,7 +7,7 @@ import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
+import { RotateCcwIcon, TypeIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
@@ -70,7 +70,7 @@ function EditorPanel() {
         );
         setShowAssistant(true);
         setAssistantResponse(response.data.answer);
-//         updateEditorContent(response.data.answer);
+        //         updateEditorContent(response.data.answer);
       },
     });
   };
@@ -108,16 +108,9 @@ function EditorPanel() {
     }
   };
 
-  const { language, theme, fontSize, editor, setFontSize, setEditor } =
-    useCodeEditorStore();
+  const { language, theme, fontSize, setFontSize } = useCodeEditorStore();
 
   const mounted = useMounted();
-
-  useEffect(() => {
-    const savedCode = localStorage.getItem(`editor-code-${language}`);
-    const newCode = savedCode || LANGUAGE_CONFIG[language].defaultCode;
-    // if (editor) editor.setValue(newCode);
-  }, [language, editor]);
 
   useEffect(() => {
     const savedFontSize = localStorage.getItem("editor-font-size");
@@ -153,7 +146,12 @@ function EditorPanel() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1e1e2e] ring-1 ring-white/5">
-              <Image src={"/" + language + ".png"} alt="Logo" width={24} height={24} />
+              <Image
+                src={"/" + language + ".png"}
+                alt="Logo"
+                width={24}
+                height={24}
+              />
             </div>
             <div>
               <h2 className="text-sm font-medium text-white">

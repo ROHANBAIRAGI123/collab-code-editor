@@ -1,6 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { Blocks, Code2, Sparkles } from "lucide-react";
+import { Blocks } from "lucide-react";
 import { SignedIn } from "@clerk/nextjs";
 import ThemeSelector from "./ThemeSelector";
 import LanguageSelector from "./LanguageSelector";
@@ -8,7 +7,6 @@ import RunButton from "./RunButton";
 import HeaderProfileBtn from "./HeaderProfileBtn";
 
 async function Header() {
-
   return (
     <div className="relative z-10">
       <div

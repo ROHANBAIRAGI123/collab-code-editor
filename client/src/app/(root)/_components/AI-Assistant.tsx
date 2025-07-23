@@ -1,12 +1,11 @@
 // AI.tsx
 "use client";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAssistantStore } from "@/store/useAssistantStore";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { RiRobot3Fill } from "react-icons/ri";
 import axios from "axios";
-import { Image } from "lucide-react";
 
 export default function AI() {
   const showAssistant = useAssistantStore((state) => state.showAssistant);
@@ -24,7 +23,7 @@ export default function AI() {
   );
   const code = useCodeEditorStore((state) => state.getCode());
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
     setUserQuery(inputValue);
     setInputValue(""); // Clear the input

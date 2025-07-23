@@ -2,13 +2,8 @@ import type { Metadata } from "next";
 // import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import Footer from "@/components/Footer";
-import { Toaster } from "react-hot-toast";
-import Home from "@/app/Home/[roomid]/page";
-import RoomID from "./RoomID/page";
-import FileTree from "@/components/FileTree";
 
-import Sidebar from "@/components/Sidebar";
+import { Toaster } from "react-hot-toast";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -44,10 +39,7 @@ export default function RootLayout({
           </Header>     */}
 
           <Toaster />
-          {children} 
-          
-
-
+          {children}
         </body>
       </html>
     </ClerkProvider>
