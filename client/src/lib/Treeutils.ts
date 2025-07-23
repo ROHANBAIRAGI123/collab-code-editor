@@ -64,13 +64,16 @@ const createFile = async (
   parentId: string | undefined
 ) => {
   try {
-    const response = await axios.post(`http://localhost:8001/api/file/create`, {
-      id: Date.now().toString(),
-      roomId: roomId,
-      label: label,
-      fileType: fileType,
-      parentId: parentId,
-    });
+    const response = await axios.post(
+      `${process.env.BACKEND_URL}/api/file/create`,
+      {
+        id: Date.now().toString(),
+        roomId: roomId,
+        label: label,
+        fileType: fileType,
+        parentId: parentId,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(error);

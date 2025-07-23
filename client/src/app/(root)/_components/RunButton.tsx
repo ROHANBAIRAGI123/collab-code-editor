@@ -20,11 +20,14 @@ function RunButton() {
   // const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
   const handleRun = async () => {
-    const response = await axios.get("http://localhost:8001/api/getCode/", {
-      params: {
-        roomId: roomId,
-      },
-    });
+    const response = await axios.get(
+      `${process.env.BACKEND_URL}/api/getCode/`,
+      {
+        params: {
+          roomId: roomId,
+        },
+      }
+    );
 
     runCode(response.data.data.currentCodeContent);
     const result = getExecutionResult();

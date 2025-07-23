@@ -63,7 +63,7 @@ function EditorPanel() {
       run: async (editor) => {
         const code = editor.getValue();
         const response = await axios.post(
-          "http://localhost:8001/api/ai/ask-suggestion",
+          `${process.env.BACKEND_URL}/api/ai/ask-suggestion`,
           {
             code,
           }

@@ -27,10 +27,13 @@ export default function AI() {
     e.preventDefault(); // Prevent default form submission behavior
     setUserQuery(inputValue);
     setInputValue(""); // Clear the input
-    const response = await axios.post("http://localhost:8001/api/ai/ask-ai", {
-      prompt: inputValue,
-      code: code,
-    });
+    const response = await axios.post(
+      `${process.env.BACKEND_URL}/api/ai/ask-ai`,
+      {
+        prompt: inputValue,
+        code: code,
+      }
+    );
     setAssistantResponse(response.data.answer);
   };
 
