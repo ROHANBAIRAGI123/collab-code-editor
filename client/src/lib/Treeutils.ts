@@ -65,7 +65,7 @@ const createFile = async (
 ) => {
   try {
     const response = await axios.post(
-      `${process.env.BACKEND_URL}/api/file/create`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/create`,
       {
         id: Date.now().toString(),
         roomId: roomId,

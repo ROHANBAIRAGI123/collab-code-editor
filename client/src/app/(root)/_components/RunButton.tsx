@@ -21,7 +21,7 @@ function RunButton() {
 
   const handleRun = async () => {
     const response = await axios.get(
-      `${process.env.BACKEND_URL}/api/getCode/`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getCode/`,
       {
         params: {
           roomId: roomId,

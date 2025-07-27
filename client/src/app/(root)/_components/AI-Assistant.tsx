@@ -28,7 +28,7 @@ export default function AI() {
     setUserQuery(inputValue);
     setInputValue(""); // Clear the input
     const response = await axios.post(
-      `${process.env.BACKEND_URL}/api/ai/ask-ai`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ai/ask-ai`,
       {
         prompt: inputValue,
         code: code,
