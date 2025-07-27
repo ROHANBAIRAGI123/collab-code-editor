@@ -3,7 +3,7 @@ import Header from "../../(root)/_components/Header";
 import OutputPanel from "../../(root)/_components/OutputPanel";
 import AI from "@/app/(root)/_components/AI-Assistant";
 
-export default function Home({ params }: { params: { roomid: string } }) {
+export default function Page({ params }: { params: { roomid: string } }) {
   console.log(params.roomid);
   return (
     <div className="min-h-screen">
