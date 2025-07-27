@@ -3,14 +3,13 @@ import Header from "../../(root)/_components/Header";
 import OutputPanel from "../../(root)/_components/OutputPanel";
 import AI from "@/app/(root)/_components/AI-Assistant";
 
-interface PageProps {
-  params: {
-    roomid: string;
-  };
-}
-
-const Page = ({ params }: PageProps) => {
-  console.log(params.roomid);
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ roomid: string }>;
+}) {
+  const { roomid } = await params;
+  console.log(roomid);
 
   return (
     <div className="min-h-screen">
@@ -24,6 +23,4 @@ const Page = ({ params }: PageProps) => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}
