@@ -1,10 +1,18 @@
+import type { NextPage } from "next";
 import EditorPanel from "../../(root)/_components/EditorPanel";
 import Header from "../../(root)/_components/Header";
 import OutputPanel from "../../(root)/_components/OutputPanel";
 import AI from "@/app/(root)/_components/AI-Assistant";
 
-export default function Page({ params }: { params: { roomid: string } }) {
+interface PageProps {
+  params: {
+    roomid: string;
+  };
+}
+
+const Page: NextPage<PageProps> = ({ params }) => {
   console.log(params.roomid);
+
   return (
     <div className="min-h-screen">
       <div className="max-w-[1800px] mx-auto p-4">
@@ -18,4 +26,6 @@ export default function Page({ params }: { params: { roomid: string } }) {
       </div>
     </div>
   );
-}
+};
+
+export default Page;
